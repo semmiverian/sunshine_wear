@@ -132,6 +132,9 @@ public class SunshineWatchFace extends CanvasWatchFaceService {
         float mTemperatureLowXOffset;
         float mTemperatureYOffset;
 
+        private static final String MAX_TEMP = "com.example.android.sunshine.max_temp";
+        private static final String MIN_TEMP = "com.example.android.sunshine.min_temp";
+
 
 
         /**
@@ -411,7 +414,7 @@ public class SunshineWatchFace extends CanvasWatchFaceService {
                 DataItem item = event.getDataItem();
                 if (item.getUri().getPath().compareTo("/sync") == 0) {
                     DataMap dataMap = DataMapItem.fromDataItem(item).getDataMap();
-                    Log.d("berubah", "onDataChanged: " + dataMap.getString("maxTemp"));
+                    Log.d("berubah", "onDataChanged: " + dataMap.getString(MAX_TEMP));
                 }
             }
         }

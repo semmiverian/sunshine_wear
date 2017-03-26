@@ -40,6 +40,9 @@ import com.example.android.sunshine.sync.SunshineSyncUtils;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.common.api.ResolvingResultCallbacks;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
 import com.google.android.gms.wearable.DataApi;
 import com.google.android.gms.wearable.PutDataMapRequest;
 import com.google.android.gms.wearable.PutDataRequest;
@@ -89,7 +92,8 @@ public class MainActivity extends AppCompatActivity implements
     private ProgressBar mLoadingIndicator;
 
     private GoogleApiClient mGoogleApiClient;
-    private static final String SYNC_KEY = "com.example.android.sunshine";
+    private static final String MAX_TEMP = "com.example.android.sunshine.max_temp";
+    private static final String MIN_TEMP = "com.example.android.sunshine.min_temp";
 
 
 
@@ -389,11 +393,23 @@ public class MainActivity extends AppCompatActivity implements
     private void sendDataToWatch2(String max, String min) {
         Log.d(TAG, "sendDataToWatch: data sent");
         PutDataMapRequest putDataMapReq = PutDataMapRequest.create("/sync");
-        putDataMapReq.getDataMap().putString("maxTemp", max);
-        putDataMapReq.getDataMap().putString("minTemp", min);
+        putDataMapReq.getDataMap().putString(MAX_TEMP, max);
+        putDataMapReq.getDataMap().putString(MIN_TEMP, min);
         PutDataRequest putDataReq = putDataMapReq.asPutDataRequest();
+        putDataReq.setUrgent();
         PendingResult<DataApi.DataItemResult> pendingResult =
                 Wearable.DataApi.putDataItem(mGoogleApiClient, putDataReq);
+
+       Wearable.DataApi.putDataItem(mGoogleApiClient, putDataReq).setResultCallback(new ResultCallback<DataApi.DataItemResult>() {
+           @Override
+           public void onResult(@NonNull DataApi.DataItemResult dataItemResult) {
+               if (dataItemResult.getStatus().isSuccess()) {
+                   Log.d(TAG, "onResult: Berhasil kirim");
+               } else {
+                   Log.e(TAG, "onResult: Failed");
+               }
+           }
+       });
     }
 
     @Override
