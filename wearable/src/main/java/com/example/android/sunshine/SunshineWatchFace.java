@@ -181,7 +181,7 @@ public class SunshineWatchFace extends CanvasWatchFaceService {
 
             Log.d("here", "onCreate: kebikin");
 
-            mGoogleApiClient = new GoogleApiClient.Builder(getApplicationContext())
+            mGoogleApiClient = new GoogleApiClient.Builder(SunshineWatchFace.this)
                     .addApi(Wearable.API)
                     .addConnectionCallbacks(this)
                     .addOnConnectionFailedListener(this)
