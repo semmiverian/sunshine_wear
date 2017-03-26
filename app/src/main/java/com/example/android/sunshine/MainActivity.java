@@ -176,6 +176,8 @@ public class MainActivity extends AppCompatActivity implements
                 .addApi(Wearable.API)
                 .build();
 
+        mGoogleApiClient.connect();
+
     }
 
     /**
@@ -384,8 +386,19 @@ public class MainActivity extends AppCompatActivity implements
                 Wearable.DataApi.putDataItem(mGoogleApiClient, putDataReq);
     }
 
+    private void sendDataToWatch2(String max, String min) {
+        Log.d(TAG, "sendDataToWatch: data sent");
+        PutDataMapRequest putDataMapReq = PutDataMapRequest.create("/sync");
+        putDataMapReq.getDataMap().putString("maxTemp", max);
+        putDataMapReq.getDataMap().putString("minTemp", min);
+        PutDataRequest putDataReq = putDataMapReq.asPutDataRequest();
+        PendingResult<DataApi.DataItemResult> pendingResult =
+                Wearable.DataApi.putDataItem(mGoogleApiClient, putDataReq);
+    }
+
     @Override
     public void onConnected(@Nullable Bundle bundle) {
+        sendDataToWatch2("100", "50");
 
     }
 

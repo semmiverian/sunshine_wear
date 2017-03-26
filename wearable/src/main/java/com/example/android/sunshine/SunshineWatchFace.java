@@ -176,11 +176,14 @@ public class SunshineWatchFace extends CanvasWatchFaceService {
 
             mCalendar = Calendar.getInstance();
 
+            Log.d("here", "onCreate: kebikin");
+
             mGoogleApiClient = new GoogleApiClient.Builder(getApplicationContext())
                     .addApi(Wearable.API)
                     .addConnectionCallbacks(this)
                     .addOnConnectionFailedListener(this)
                     .build();
+            mGoogleApiClient.connect();
         }
 
         @Override
@@ -415,6 +418,7 @@ public class SunshineWatchFace extends CanvasWatchFaceService {
 
         @Override
         public void onConnected(@Nullable Bundle bundle) {
+            Log.d("coba", "onConnected: kena konek");
             Wearable.DataApi.addListener(mGoogleApiClient, this);
 
         }
