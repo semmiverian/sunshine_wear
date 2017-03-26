@@ -26,6 +26,7 @@ import com.example.android.sunshine.data.WeatherContract;
 import com.example.android.sunshine.utilities.NetworkUtils;
 import com.example.android.sunshine.utilities.NotificationUtils;
 import com.example.android.sunshine.utilities.OpenWeatherJsonUtils;
+import com.example.android.sunshine.utilities.WatchFaceUtilites;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.wearable.DataApi;
@@ -77,6 +78,9 @@ public class SunshineSyncTask {
                 sendDataToWatch(weatherValues[0]);
                 /* Get a handle on the ContentResolver to delete and insert data */
                 ContentResolver sunshineContentResolver = context.getContentResolver();
+
+                /* Send Data to the Watch */
+                WatchFaceUtilites.sendDataToWatch(context, weatherValues[0]);
 
                 /* Delete old weather data because we don't need to keep multiple days' data */
                 sunshineContentResolver.delete(
