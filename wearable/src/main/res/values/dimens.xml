@@ -18,8 +18,8 @@
     <dimen name="high_temp_x_offset">85dp</dimen>
     <dimen name="high_temp_x_offset_round">95dp</dimen>
 
-    <dimen name="low_temp_x_offset">110dp</dimen>
-    <dimen name="low_temp_x_offset_round">120dp</dimen>
+    <dimen name="low_temp_x_offset">130dp</dimen>
+    <dimen name="low_temp_x_offset_round">140dp</dimen>
 
     <dimen name="tes_aja">25dp</dimen>
 

@@ -22,6 +22,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -43,6 +44,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.wearable.Asset;
 import com.google.android.gms.wearable.DataApi;
 import com.google.android.gms.wearable.DataEvent;
 import com.google.android.gms.wearable.DataEventBuffer;
@@ -51,6 +53,7 @@ import com.google.android.gms.wearable.DataMap;
 import com.google.android.gms.wearable.DataMapItem;
 import com.google.android.gms.wearable.Wearable;
 
+import java.io.InputStream;
 import java.lang.ref.WeakReference;
 import java.util.Calendar;
 import java.util.Locale;
@@ -132,8 +135,13 @@ public class SunshineWatchFace extends CanvasWatchFaceService {
         float mTemperatureLowXOffset;
         float mTemperatureYOffset;
 
+        float maxTemperature;
+        float minTemperature;
+        Bitmap iconWeather;
+
         private static final String MAX_TEMP = "com.example.android.sunshine.max_temp";
         private static final String MIN_TEMP = "com.example.android.sunshine.min_temp";
+        private static final String ICON = "com.example.android.sunshine.icon";
 
 
 
@@ -258,7 +266,7 @@ public class SunshineWatchFace extends CanvasWatchFaceService {
                     ? R.dimen.high_temp_x_offset_round : R.dimen.high_temp_x_offset);
 
             mTemperatureLowXOffset = resources.getDimension(isRound
-                    ? R.dimen.low_temp_x_offset_round : R.dimen.low_temp_x_offset_round);
+                    ? R.dimen.low_temp_x_offset_round : R.dimen.low_temp_x_offset);
 
             float textSize = resources.getDimension(isRound
                     ? R.dimen.digital_text_size_round : R.dimen.digital_text_size);
@@ -361,14 +369,18 @@ public class SunshineWatchFace extends CanvasWatchFaceService {
             canvas.drawLine(120, 200, 200, 200, mLinePaint);
 
             // Image
-            Drawable d = getDrawable(R.drawable.art_clear);
-            canvas.drawBitmap(drawableToBitmap(d), 100, 220, null);
+            if (iconWeather == null) {
+                Drawable d = getDrawable(R.drawable.art_clear);
+                canvas.drawBitmap(drawableToBitmap(d), 100, 220, null);
+            } else {
+                canvas.drawBitmap(iconWeather, 100, 220, null);
+            }
 
             // High temperature
-            canvas.drawText("27", mTemperatureHighXOffset, mTemperatureYOffset, mHighTemperaturePaint);
+            canvas.drawText(String.valueOf(maxTemperature), mTemperatureHighXOffset, mTemperatureYOffset, mHighTemperaturePaint);
 
             // Low temperature
-            canvas.drawText("16", mTemperatureLowXOffset, mTemperatureYOffset, mLowTemperaturePaint);
+            canvas.drawText(String.valueOf(minTemperature), mTemperatureLowXOffset, mTemperatureYOffset, mLowTemperaturePaint);
 
 
         }
@@ -414,6 +426,10 @@ public class SunshineWatchFace extends CanvasWatchFaceService {
                 DataItem item = event.getDataItem();
                 if (item.getUri().getPath().compareTo("/sync") == 0) {
                     DataMap dataMap = DataMapItem.fromDataItem(item).getDataMap();
+                    maxTemperature = dataMap.getFloat(MAX_TEMP);
+                    minTemperature = dataMap.getFloat(MIN_TEMP);
+                    iconWeather = loadWeatherIcon(dataMap.getAsset(ICON));
+                    invalidate();
                     Log.d("berubah", "onDataChanged: " + dataMap.getString(MAX_TEMP));
                 }
             }
@@ -436,6 +452,15 @@ public class SunshineWatchFace extends CanvasWatchFaceService {
 
         }
 
+        private Bitmap loadWeatherIcon(Asset asset) {
+            InputStream inputStream = Wearable.DataApi.getFdForAsset(mGoogleApiClient, asset).await().getInputStream();
+            mGoogleApiClient.disconnect();
+            if (inputStream == null) {
+                return null;
+            }
+            return BitmapFactory.decodeStream(inputStream);
+        }
+
 
     }
 
@@ -454,4 +479,6 @@ public class SunshineWatchFace extends CanvasWatchFaceService {
 
         return bitmap;
     }
+
+
 }

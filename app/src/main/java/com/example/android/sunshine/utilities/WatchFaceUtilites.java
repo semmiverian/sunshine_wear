@@ -40,7 +40,7 @@ public class WatchFaceUtilites {
 
         // TODO change the ID with actual weather ID
         int weatherIconId = SunshineWeatherUtils
-                .getSmallArtResourceIdForWeatherCondition(1);
+                .getSmallArtResourceIdForWeatherCondition(weatherValue.getAsInteger("weather_id"));
         Bitmap icon = BitmapFactory.decodeResource(mContext.getResources(), weatherIconId);
 
         GoogleApiClient  mGoogleApiClient = new GoogleApiClient.Builder(mContext)
@@ -67,8 +67,8 @@ public class WatchFaceUtilites {
         mGoogleApiClient.connect();
 
         PutDataMapRequest putDataMapReq = PutDataMapRequest.create("/sync");
-        putDataMapReq.getDataMap().putString(MAX_TEMP, "111");
-        putDataMapReq.getDataMap().putString(MIN_TEMP, "100");
+        putDataMapReq.getDataMap().putFloat(MAX_TEMP, weatherValue.getAsFloat("max"));
+        putDataMapReq.getDataMap().putFloat(MIN_TEMP, weatherValue.getAsFloat("min"));
         putDataMapReq.getDataMap().putAsset(ICON, creatAssetFromBitmap(icon));
         PutDataRequest putDataReq = putDataMapReq.asPutDataRequest();
         putDataReq.setUrgent();
