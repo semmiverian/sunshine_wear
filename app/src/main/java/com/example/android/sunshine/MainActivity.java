@@ -262,9 +262,9 @@ public class MainActivity extends AppCompatActivity implements
      */
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        Cursor copy = data;
-        copy.moveToFirst();
-        sendDataToWatch(copy);
+//        Cursor copy = data;
+//        copy.moveToFirst();
+//        sendDataToWatch(copy);
 //        Log.d(TAG, "onLoadFinished: " + copy.getString(INDEX_WEATHER_MAX_TEMP));
         mForecastAdapter.swapCursor(data);
         if (mPosition == RecyclerView.NO_POSITION) mPosition = 0;
