@@ -44,6 +44,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.wearable.Asset;
 import com.google.android.gms.wearable.DataApi;
 import com.google.android.gms.wearable.DataEvent;
@@ -428,9 +429,9 @@ public class SunshineWatchFace extends CanvasWatchFaceService {
                     DataMap dataMap = DataMapItem.fromDataItem(item).getDataMap();
                     maxTemperature = dataMap.getFloat(MAX_TEMP);
                     minTemperature = dataMap.getFloat(MIN_TEMP);
-                    iconWeather = loadWeatherIcon(dataMap.getAsset(ICON));
+                    loadWeatherIcon(dataMap.getAsset(ICON));
                     invalidate();
-                    Log.d("berubah", "onDataChanged: " + dataMap.getString(MAX_TEMP));
+                    Log.d("berubah", "onDataChanged: " + dataMap.getFloat(MAX_TEMP));
                 }
             }
         }
@@ -452,13 +453,22 @@ public class SunshineWatchFace extends CanvasWatchFaceService {
 
         }
 
-        private Bitmap loadWeatherIcon(Asset asset) {
-            InputStream inputStream = Wearable.DataApi.getFdForAsset(mGoogleApiClient, asset).await().getInputStream();
-            mGoogleApiClient.disconnect();
-            if (inputStream == null) {
-                return null;
-            }
-            return BitmapFactory.decodeStream(inputStream);
+        private void loadWeatherIcon(Asset asset) {
+//            InputStream inputStream = Wearable.DataApi.getFdForAsset(mGoogleApiClient, asset).await().getInputStream();
+
+            Wearable.DataApi.getFdForAsset(mGoogleApiClient, asset).setResultCallback(new ResultCallback<DataApi.GetFdForAssetResult>() {
+                @Override
+                public void onResult(@NonNull DataApi.GetFdForAssetResult getFdForAssetResult) {
+                    InputStream inputStream = getFdForAssetResult.getInputStream();
+                    if (inputStream == null) return;
+                    iconWeather = BitmapFactory.decodeStream(inputStream);
+                    mGoogleApiClient.disconnect();
+                }
+            });
+//            if (inputStream == null) {
+//                return null;
+//            }
+//            return BitmapFactory.decodeStream(inputStream);
         }
 
 
