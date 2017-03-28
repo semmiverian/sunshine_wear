@@ -136,8 +136,8 @@ public class SunshineWatchFace extends CanvasWatchFaceService {
         float mTemperatureLowXOffset;
         float mTemperatureYOffset;
 
-        float maxTemperature;
-        float minTemperature;
+        String maxTemperature;
+        String minTemperature;
         Bitmap iconWeather;
 
         private static final String MAX_TEMP = "com.example.android.sunshine.max_temp";
@@ -378,10 +378,10 @@ public class SunshineWatchFace extends CanvasWatchFaceService {
             }
 
             // High temperature
-            canvas.drawText(String.valueOf(maxTemperature), mTemperatureHighXOffset, mTemperatureYOffset, mHighTemperaturePaint);
+            canvas.drawText(maxTemperature, mTemperatureHighXOffset, mTemperatureYOffset, mHighTemperaturePaint);
 
             // Low temperature
-            canvas.drawText(String.valueOf(minTemperature), mTemperatureLowXOffset, mTemperatureYOffset, mLowTemperaturePaint);
+            canvas.drawText(minTemperature, mTemperatureLowXOffset, mTemperatureYOffset, mLowTemperaturePaint);
 
 
         }
@@ -427,11 +427,11 @@ public class SunshineWatchFace extends CanvasWatchFaceService {
                 DataItem item = event.getDataItem();
                 if (item.getUri().getPath().compareTo("/sync") == 0) {
                     DataMap dataMap = DataMapItem.fromDataItem(item).getDataMap();
-                    maxTemperature = dataMap.getFloat(MAX_TEMP);
-                    minTemperature = dataMap.getFloat(MIN_TEMP);
+                    maxTemperature = dataMap.getString(MAX_TEMP);
+                    minTemperature = dataMap.getString(MIN_TEMP);
                     loadWeatherIcon(dataMap.getAsset(ICON));
                     invalidate();
-                    Log.d("berubah", "onDataChanged: " + dataMap.getFloat(MAX_TEMP));
+                    Log.d("berubah", "onDataChanged: " + dataMap.getString(MAX_TEMP));
                 }
             }
         }

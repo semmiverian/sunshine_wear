@@ -66,9 +66,15 @@ public class WatchFaceUtilites {
 
         mGoogleApiClient.connect();
 
+        long maxTemp = Math.round(weatherValue.getAsLong("max"));
+        long minTemp = Math.round(weatherValue.getAsLong("min"));
+
+        String max = SunshineWeatherUtils.formatTemperature(mContext, maxTemp);
+        String min = SunshineWeatherUtils.formatTemperature(mContext, minTemp);
+
         PutDataMapRequest putDataMapReq = PutDataMapRequest.create("/sync");
-        putDataMapReq.getDataMap().putFloat(MAX_TEMP, weatherValue.getAsFloat("max"));
-        putDataMapReq.getDataMap().putFloat(MIN_TEMP, weatherValue.getAsFloat("min"));
+        putDataMapReq.getDataMap().putString(MAX_TEMP, max);
+        putDataMapReq.getDataMap().putString(MIN_TEMP, min);
         putDataMapReq.getDataMap().putAsset(ICON, creatAssetFromBitmap(icon));
         PutDataRequest putDataReq = putDataMapReq.asPutDataRequest();
         putDataReq.setUrgent();
